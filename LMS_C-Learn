@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EDU LMS - SD Negeri 3 Canduk</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#2563eb',
+                            600: '#1d4ed8',
+                            700: '#1e40af',
+                            800: '#1e3a8a',
+                            900: '#172554',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        .embed-container iframe {
+            width: 100%;
+            min-height: 450px;
+            border-radius: 0.75rem;
+            border: none;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <!-- LOGIN MODAL CONTAINER -->
+    <div id="loginOverlay" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden border border-slate-100 transition-all transform">
+            <!-- Modal Header -->
+            <div class="bg-gradient-to-r from-brand-700 to-brand-600 p-6 text-white text-center relative">
+                <div class="inline-flex items-center justify-center w-14 h-14 bg-white/10 rounded-2xl backdrop-blur-md mb-3 border border-white/20">
+                    <i class="fa-solid fa-graduation-cap text-2xl text-yellow-300"></i>
+                </div>
+                <h2 class="text-2xl font-bold tracking-tight">EDU LMS</h2>
+                <p class="text-brand-100 text-xs font-medium mt-1">SD NEGERI 3 CANDUK</p>
+            </div>
+
+            <!-- Tab Switcher -->
+            <div class="flex border-b border-slate-100 bg-slate-50/50 p-1">
+                <button id="tabSiswaBtn" onclick="switchLoginTab('siswa')" class="flex-1 py-2.5 text-xs font-bold rounded-xl text-brand-600 bg-white shadow-sm transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-user-graduate"></i> Masuk Siswa
+                </button>
+                <button id="tabAdminBtn" onclick="switchLoginTab('admin')" class="flex-1 py-2.5 text-xs font-semibold rounded-xl text-slate-500 hover:text-slate-700 transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-user-gear"></i> Portal Guru / Admin
+                </button>
+            </div>
+
+            <!-- Form Body -->
+            <div class="p-6">
+                <!-- FORM SISWA -->
+                <form id="formSiswa" onsubmit="handleLoginSiswa(event)">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">Nama Lengkap Siswa</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                                    <i class="fa-solid fa-user"></i>
+                                </span>
+                                <input type="text" id="siswaNama" required placeholder="Masukkan nama lengkap" class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">Pilih Kelas</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                                    <i class="fa-solid fa-chalkboard-user"></i>
+                                </span>
+                                <select id="siswaKelas" required class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all appearance-none cursor-pointer">
+                                    <option value="" disabled selected>-- Pilih Kelas Anda --</option>
+                                    <option value="Kelas 1">Kelas 1 SD</option>
+                                    <option value="Kelas 2">Kelas 2 SD</option>
+                                    <option value="Kelas 3">Kelas 3 SD</option>
+                                    <option value="Kelas 4">Kelas 4 SD</option>
+                                    <option value="Kelas 5">Kelas 5 SD</option>
+                                    <option value="Kelas 6">Kelas 6 SD</option>
+                                </select>
+                                <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-400">
+                                    <i class="fa-solid fa-chevron-down text-xs"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-brand-500/30 transition-all flex items-center justify-center gap-2">
+                            <span>Masuk Belajar</span>
+                            <i class="fa-solid fa-arrow-right text-xs"></i>
+                        </button>
+                    </div>
+                </form>
+
+                <!-- FORM ADMIN -->
+                <form id="formAdmin" onsubmit="handleLoginAdmin(event)" class="hidden">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">Username Admin</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                                    <i class="fa-solid fa-user-shield"></i>
+                                </span>
+                                <input type="text" id="adminUsername" required placeholder="Username (Contoh: Admin)" class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">Password</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                                    <i class="fa-solid fa-key"></i>
+                                </span>
+                                <input type="password" id="adminPassword" required placeholder="••••••••" class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all">
+                            </div>
+                        </div>
+                        <div id="adminLoginError" class="hidden text-xs text-rose-600 bg-rose-50 p-2.5 rounded-lg border border-rose-100 flex items-center gap-2">
+                            <i class="fa-solid fa-circle-exclamation"></i>
+                            <span>Username atau password salah!</span>
+                        </div>
+                        <button type="submit" class="w-full py-3 bg-slate-800 hover:bg-slate-900 text-white font-bold text-sm rounded-xl shadow-lg shadow-slate-900/20 transition-all flex items-center justify-center gap-2">
+                            <span>Kelola LMS (Admin)</span>
+                            <i class="fa-solid fa-lock-open text-xs"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="px-6 py-3 bg-slate-50 border-t border-slate-100 text-center">
+                <span class="text-[11px] text-slate-400">SD Negeri 3 Canduk &copy; LMS Portal</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN APP WRAPPER -->
+    <div id="mainApp" class="flex-1 flex overflow-hidden">
+        <!-- SIDEBAR NAV -->
+        <aside class="w-64 bg-slate-900 text-slate-300 flex flex-col shrink-0 shadow-xl z-20 transition-all duration-300">
+            <!-- Sidebar Header -->
+            <div class="p-5 border-b border-slate-800 flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-brand-600 flex items-center justify-center text-white font-bold text-lg shadow-md shadow-brand-500/20">
+                    <i class="fa-solid fa-school"></i>
+                </div>
+                <div class="overflow-hidden">
+                    <h1 class="text-sm font-bold text-white tracking-wide truncate">SDN 3 CANDUK</h1>
+                    <p class="text-[11px] text-brand-400 font-medium truncate">LMS Learning Hub</p>
+                </div>
+            </div>
+
+            <!-- User Info Badge -->
+            <div class="p-4 mx-3 my-3 bg-slate-800/70 border border-slate-700/50 rounded-xl flex items-center gap-3">
+                <div id="userAvatar" class="w-8 h-8 rounded-full bg-brand-500/20 text-brand-400 flex items-center justify-center font-bold text-xs border border-brand-500/30">
+                    U
+                </div>
+                <div class="min-w-0 flex-1">
+                    <p id="userNameDisplay" class="text-xs font-bold text-white truncate">Guest User</p>
+                    <p id="userRoleBadge" class="text-[10px] text-emerald-400 font-medium flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span>Siswa</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="flex-1 px-3 space-y-1 overflow-y-auto custom-scrollbar">
+                <div class="px-3 pt-2 pb-1 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Menu Utama</div>
+                
+                <button onclick="navigateTab('ringkasan')" id="nav-ringkasan" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-white bg-brand-600 shadow-md shadow-brand-600/30 transition-all">
+                    <i class="fa-solid fa-chart-pie text-sm w-5"></i>
+                    <span>Ringkasan Dashboard</span>
+                </button>
+
+                <button onclick="navigateTab('lms')" id="nav-lms" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800/60 transition-all">
+                    <i class="fa-solid fa-book-open text-sm w-5"></i>
+                    <span>Mata Pelajaran (LMS)</span>
+                </button>
+
+                <button onclick="navigateTab('simulasi')" id="nav-simulasi" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800/60 transition-all">
+                    <i class="fa-solid fa-laptop-code text-sm w-5"></i>
+                    <span>Simulasi Interaktif</span>
+                </button>
+
+                <button onclick="navigateTab('penugasan')" id="nav-penugasan" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800/60 transition-all">
+                    <i class="fa-solid fa-pen-to-square text-sm w-5"></i>
+                    <span>Penugasan & LKPD</span>
+                </button>
+
+                <div id="adminNavSection" class="hidden">
+                    <div class="px-3 pt-4 pb-1 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Panel Pengawasan</div>
+                    <button onclick="navigateTab('monitoring')" id="nav-monitoring" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800/60 transition-all">
+                        <i class="fa-solid fa-users-viewfinder text-sm w-5 text-amber-400"></i>
+                        <span class="text-amber-300">Real-time Monitoring</span>
+                    </button>
+                </div>
+            </nav>
+
+            <!-- Logout Button -->
+            <div class="p-3 border-t border-slate-800">
+                <button onclick="logout()" class="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-bold text-rose-400 hover:bg-rose-500/10 transition-all border border-rose-500/20">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    <span>Keluar Akun</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- CONTENT AREA -->
+        <main class="flex-1 flex flex-col min-w-0 bg-slate-50 overflow-hidden">
+            <!-- Top App Bar -->
+            <header class="bg-white border-b border-slate-200/80 px-6 py-4 flex items-center justify-between shrink-0 shadow-sm">
+                <div>
+                    <h2 id="pageTitle" class="text-lg font-bold text-slate-800">Ringkasan Dashboard</h2>
+                    <p id="pageSubtitle" class="text-xs text-slate-500">Selamat datang di portal pembelajaran SD Negeri 3 Canduk</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-emerald-50 text-emerald-700 rounded-full border border-emerald-200/60 text-xs font-semibold">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span id="realtimeStatus">System Live & Connected</span>
+                    </div>
+                    <button id="btnTambahKonten" onclick="openModalTambah()" class="hidden bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-md shadow-brand-500/20 transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-plus"></i>
+                        <span id="btnTambahLabel">Tambah Data</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Scrollable Page Container -->
+            <div class="flex-1 overflow-y-auto p-6 custom-scrollbar space-y-6">
+
+                <!-- SECTION 1: RINGKASAN DASHBOARD -->
+                <section id="section-ringkasan" class="space-y-6">
+                    <!-- Banner Info -->
+                    <div class="bg-gradient-to-r from-brand-700 via-brand-600 to-indigo-700 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
+                        <div class="absolute -right-10 -bottom-10 opacity-10 text-white pointer-events-none">
+                            <i class="fa-solid fa-graduation-cap text-[180px]"></i>
+                        </div>
+                        <div class="max-w-xl relative z-10 space-y-2">
+                            <span class="px-2.5 py-1 bg-white/10 text-white border border-white/20 text-[10px] font-bold rounded-full uppercase tracking-wider">Portal LMS Sekolah</span>
+                            <h3 class="text-2xl font-extrabold tracking-tight">Selamat Belajar & Berkarya!</h3>
+                            <p class="text-xs text-brand-100 leading-relaxed">Gunakan modul interaktif, ikuti simulasi digital, dan kerjakan tugas secara tepat waktu. Mari ciptakan pembelajaran seru dan bermakna.</p>
+                        </div>
+                    </div>
+
+                    <!-- Cards Stats -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl shrink-0">
+                                <i class="fa-solid fa-book"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs font-semibold text-slate-500">Mata Pelajaran</p>
+                                <h4 id="statLmsCount" class="text-xl font-bold text-slate-800">0</h4>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl shrink-0">
+                                <i class="fa-solid fa-laptop-code"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs font-semibold text-slate-500">Simulasi Digital</p>
+                                <h4 id="statSimulasiCount" class="text-xl font-bold text-slate-800">0</h4>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl shrink-0">
+                                <i class="fa-solid fa-list-check"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs font-semibold text-slate-500">Penugasan & LKPD</p>
+                                <h4 id="statPenugasanCount" class="text-xl font-bold text-slate-800">0</h4>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl shrink-0">
+                                <i class="fa-solid fa-users"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs font-semibold text-slate-500">Siswa Terdaftar</p>
+                                <h4 id="statSiswaCount" class="text-xl font-bold text-slate-800">0</h4>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Activity Preview -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
+                        <h4 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-clock-rotate-left text-brand-600"></i>
+                            <span>Pengumuman & Aktivitas Terbaru</span>
+                        </h4>
+                        <div class="space-y-3">
+                            <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-100 flex items-start gap-3">
+                                <span class="w-2 h-2 rounded-full bg-brand-600 mt-1.5 shrink-0"></span>
+                                <div class="text-xs">
+                                    <p class="font-bold text-slate-700">Selamat Datang di LMS SD Negeri 3 Canduk</p>
+                                    <p class="text-slate-500 mt-0.5">Silakan pilih menu di sebelah kiri untuk mulai membaca materi, mencoba simulasi Canva/PhET, atau mengirim penugasan.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 2: MATERI LMS -->
+                <section id="section-lms" class="hidden space-y-6">
+                    <div id="containerLMS" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                        <!-- Dynamic Item LMS Rendered Here -->
+                    </div>
+                </section>
+
+                <!-- SECTION 3: SIMULASI INTERAKTIF -->
+                <section id="section-simulasi" class="hidden space-y-6">
+                    <div id="containerSimulasi" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Dynamic Item Simulasi Rendered Here -->
+                    </div>
+                </section>
+
+                <!-- SECTION 4: PENUGASAN & LKPD -->
+                <section id="section-penugasan" class="hidden space-y-6">
+                    <div id="containerPenugasan" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Dynamic Item Penugasan Rendered Here -->
+                    </div>
+                </section>
+
+                <!-- SECTION 5: REALTIME MONITORING (ADMIN ONLY) -->
+                <section id="section-monitoring" class="hidden space-y-6">
+                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+                        <div class="p-5 bg-slate-900 text-white flex items-center justify-between">
+                            <div>
+                                <h3 class="text-sm font-bold flex items-center gap-2">
+                                    <i class="fa-solid fa-users-viewfinder text-amber-400"></i>
+                                    <span>Monitoring Pengumpulan Penugasan Siswa</span>
+                                </h3>
+                                <p class="text-xs text-slate-400 mt-0.5">Memantau aktivitas pengerjaan siswa secara realtime</p>
+                            </div>
+                            <span class="px-3 py-1 bg-amber-400/20 text-amber-300 border border-amber-400/30 rounded-full text-xs font-semibold">
+                                Live Tracking Active
+                            </span>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs text-slate-600">
+                                <thead class="bg-slate-100 text-slate-700 uppercase font-bold text-[10px] tracking-wider border-b border-slate-200">
+                                    <tr>
+                                        <th class="py-3.5 px-4">Nama Siswa</th>
+                                        <th class="py-3.5 px-4">Kelas</th>
+                                        <th class="py-3.5 px-4">Tugas / LKPD</th>
+                                        <th class="py-3.5 px-4">Status Pengerjaan</th>
+                                        <th class="py-3.5 px-4">Waktu Submit</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="monitoringTableBody" class="divide-y divide-slate-100 font-medium">
+                                    <!-- Dynamic Monitoring Rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL FORM TAMBAH / EDIT KONTEN -->
+    <div id="modalKonten" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden border border-slate-100 flex flex-col max-h-[90vh]">
+            <div class="bg-slate-900 px-6 py-4 text-white flex items-center justify-between shrink-0">
+                <h3 id="modalFormTitle" class="text-sm font-bold flex items-center gap-2">
+                    <i class="fa-solid fa-square-plus text-brand-400"></i>
+                    <span>Tambah Data Pelajaran</span>
+                </h3>
+                <button onclick="closeModalKonten()" class="text-slate-400 hover:text-white text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form id="formKonten" onsubmit="handleSaveKonten(event)" class="p-6 space-y-4 overflow-y-auto custom-scrollbar flex-1">
+                <input type="hidden" id="editItemKey">
+                
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Judul / Nama Mata Pelajaran</label>
+                    <input type="text" id="inputJudul" required placeholder="Contoh: IPA - Magnet Sehari-hari" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:bg-white outline-none">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Target Kelas</label>
+                        <select id="inputKelas" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:bg-white outline-none">
+                            <option value="Semua Kelas">Semua Kelas</option>
+                            <option value="Kelas 1">Kelas 1</option>
+                            <option value="Kelas 2">Kelas 2</option>
+                            <option value="Kelas 3">Kelas 3</option>
+                            <option value="Kelas 4">Kelas 4</option>
+                            <option value="Kelas 5">Kelas 5</option>
+                            <option value="Kelas 6">Kelas 6</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Kategori Menu</label>
+                        <select id="inputKategori" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:bg-white outline-none">
+                            <option value="lms">LMS (Mata Pelajaran)</option>
+                            <option value="simulasi">Simulasi Interaktif</option>
+                            <option value="penugasan">Penugasan & LKPD</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Deskripsi Ringkas</label>
+                    <textarea id="inputDeskripsi" rows="3" required placeholder="Tuliskan petunjuk atau materi penjelasan singkat..." class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:bg-white outline-none"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Embed Link / Kode iFrame (Mendukung Canva / Canvasite)</label>
+                    <textarea id="inputEmbed" rows="3" placeholder="Masukkan URL Embed atau Kode <iframe> Canva/PhET..." class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-mono text-xs focus:ring-2 focus:ring-brand-500 focus:bg-white outline-none"></textarea>
+                    <p class="text-[10px] text-slate-400 mt-1">*Bisa memasukkan URL biasa atau tag HTML &lt;iframe src="..."&gt;</p>
+                </div>
+
+                <div class="pt-3 border-t border-slate-100 flex justify-end gap-2">
+                    <button type="button" onclick="closeModalKonten()" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-xs rounded-xl transition-all">Batal</button>
+                    <button type="submit" class="px-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs rounded-xl shadow-md shadow-brand-500/20 transition-all">Simpan Konten</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 hidden bg-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 border border-slate-700 text-xs font-medium">
+        <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400 text-base"></i>
+        <span id="toastMessage">Pesan Notifikasi</span>
+    </div>
+
+    <!-- APPLICATION LOGIC SCRIPT -->
+    <script>
+        // DATA STATE (Menggunakan LocalStorage & Simulated Realtime Broadcast Channel)
+        const STORAGE_KEY_DATA = 'SDN3_LMS_DATA_V1';
+        const STORAGE_KEY_USER = 'SDN3_LMS_USER_V1';
+        const STORAGE_KEY_SUBMIT = 'SDN3_LMS_SUBMISSIONS_V1';
+
+        // Initial Sample Items
+        const initialData = [
+            {
+                id: 'item-1',
+                judul: 'Bahasa Indonesia - Pengenalan Majas',
+                kelas: 'Kelas 5',
+                kategori: 'lms',
+                deskripsi: 'Memahami jenis-jenis majas personifikasi dan hiperbola dalam teks cerita.',
+                embed: 'https://www.canva.com/design/DAGXxxxxxx/watch'
+            },
+            {
+                id: 'item-2',
+                judul: 'Simulasi Sains - Sifat Magnet Interaktif',
+                kelas: 'Kelas 4',
+                kategori: 'simulasi',
+                deskripsi: 'Cobalah melakukan simulasi kutub magnet berikut untuk melihat gaya tarik-menarik.',
+                embed: '<iframe src="https://phet.colorado.edu/sims/html/magnet-and-compass/latest/magnet-and-compass_all.html" width="100%" height="400"></iframe>'
+            },
+            {
+                id: 'item-3',
+                judul: 'LKPD Mandiri - Lembar Kerja Norma & Aturan',
+                kelas: 'Kelas 4',
+                kategori: 'penugasan',
+                deskripsi: 'Selesaikan penugasan lembar kerja berikut langsung dari Canva Site.',
+                embed: 'https://www.canva.com'
+            }
+        ];
+
+        let state = {
+            currentUser: null, // { role: 'admin'|'siswa', nama: '', kelas: '' }
+            currentTab: 'ringkasan',
+            items: [],
+            submissions: []
+        };
+
+        // Realtime Synchronizer via BroadcastChannel API
+        const realtimeChannel = new BroadcastChannel('sdn3_lms_realtime_sync');
+
+        // INITIALIZATION
+        window.addEventListener('DOMContentLoaded', () => {
+            loadState();
+            setupRealtimeListener();
+            checkSession();
+        });
+
+        function loadState() {
+            const storedData = localStorage.getItem(STORAGE_KEY_DATA);
+            state.items = storedData ? JSON.parse(storedData) : initialData;
+            if(!storedData) localStorage.setItem(STORAGE_KEY_DATA, JSON.stringify(initialData));
+
+            const storedSubmissions = localStorage.getItem(STORAGE_KEY_SUBMIT);
+            state.submissions = storedSubmissions ? JSON.parse(storedSubmissions) : [
+                { nama: 'Budi Santoso', kelas: 'Kelas 4', tugasJudul: 'LKPD Mandiri - Lembar Kerja Norma & Aturan', waktu: '10 Nov 2026, 08:30', status: 'Selesai' }
+            ];
+            if(!storedSubmissions) localStorage.setItem(STORAGE_KEY_SUBMIT, JSON.stringify(state.submissions));
+        }
+
+        function checkSession() {
+            const savedUser = localStorage.getItem(STORAGE_KEY_USER);
+            if (savedUser) {
+                state.currentUser = JSON.parse(savedUser);
+                document.getElementById('loginOverlay').classList.add('hidden');
+                updateUserUI();
+                renderAll();
+            } else {
+                document.getElementById('loginOverlay').classList.remove('hidden');
+            }
+        }
+
+        // REALTIME EVENT HANDLERS
+        function setupRealtimeListener() {
+            realtimeChannel.onmessage = (event) => {
+                if (event.data && event.data.type === 'DATA_UPDATED') {
+                    loadState();
+                    renderAll();
+                    showToast('Data diperbarui secara realtime!');
+                }
+            };
+        }
+
+        function notifyDataChange() {
+            localStorage.setItem(STORAGE_KEY_DATA, JSON.stringify(state.items));
+            localStorage.setItem(STORAGE_KEY_SUBMIT, JSON.stringify(state.submissions));
+            realtimeChannel.postMessage({ type: 'DATA_UPDATED', timestamp: Date.now() });
+            renderAll();
+        }
+
+        // LOGIN TAB SWITCHING
+        function switchLoginTab(type) {
+            const tabSiswa = document.getElementById('tabSiswaBtn');
+            const tabAdmin = document.getElementById('tabAdminBtn');
+            const formSiswa = document.getElementById('formSiswa');
+            const formAdmin = document.getElementById('formAdmin');
+
+            if (type === 'siswa') {
+                tabSiswa.className = "flex-1 py-2.5 text-xs font-bold rounded-xl text-brand-600 bg-white shadow-sm transition-all flex items-center justify-center gap-2";
+                tabAdmin.className = "flex-1 py-2.5 text-xs font-semibold rounded-xl text-slate-500 hover:text-slate-700 transition-all flex items-center justify-center gap-2";
+                formSiswa.classList.remove('hidden');
+                formAdmin.classList.add('hidden');
+            } else {
+                tabAdmin.className = "flex-1 py-2.5 text-xs font-bold rounded-xl text-brand-600 bg-white shadow-sm transition-all flex items-center justify-center gap-2";
+                tabSiswa.className = "flex-1 py-2.5 text-xs font-semibold rounded-xl text-slate-500 hover:text-slate-700 transition-all flex items-center justify-center gap-2";
+                formAdmin.classList.remove('hidden');
+                formSiswa.classList.add('hidden');
+            }
+        }
+
+        function handleLoginSiswa(e) {
+            e.preventDefault();
+            const nama = document.getElementById('siswaNama').value.trim();
+            const kelas = document.getElementById('siswaKelas').value;
+
+            if (nama && kelas) {
+                state.currentUser = { role: 'siswa', nama, kelas };
+                localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(state.currentUser));
+                document.getElementById('loginOverlay').classList.add('hidden');
+                updateUserUI();
+                renderAll();
+                showToast(`Selamat datang, ${nama}!`);
+            }
+        }
+
+        function handleLoginAdmin(e) {
+            e.preventDefault();
+            const user = document.getElementById('adminUsername').value.trim();
+            const pass = document.getElementById('adminPassword').value.trim();
+            const errorElement = document.getElementById('adminLoginError');
+
+            if (user.toLowerCase() === 'admin' && pass === '123456') {
+                errorElement.classList.add('hidden');
+                state.currentUser = { role: 'admin', nama: 'Administrator Guru', kelas: 'Kelola LMS Penuh' };
+                localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(state.currentUser));
+                document.getElementById('loginOverlay').classList.add('hidden');
+                updateUserUI();
+                renderAll();
+                showToast('Login Admin Berhasil!');
+            } else {
+                errorElement.classList.remove('hidden');
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem(STORAGE_KEY_USER);
+            state.currentUser = null;
+            document.getElementById('loginOverlay').classList.remove('hidden');
+            document.getElementById('formSiswa').reset();
+            document.getElementById('formAdmin').reset();
+        }
+
+        // UPDATE UI BASED ON USER ROLE
+        function updateUserUI() {
+            if (!state.currentUser) return;
+            const u = state.currentUser;
+
+            document.getElementById('userNameDisplay').innerText = u.nama;
+            document.getElementById('userAvatar').innerText = u.nama.charAt(0).toUpperCase();
+
+            const roleBadge = document.getElementById('userRoleBadge');
+            const btnTambah = document.getElementById('btnTambahKonten');
+            const adminNavSection = document.getElementById('adminNavSection');
+
+            if (u.role === 'admin') {
+                roleBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span><span>Admin / Guru</span>`;
+                roleBadge.className = "text-[10px] text-amber-400 font-medium flex items-center gap-1";
+                btnTambah.classList.remove('hidden');
+                adminNavSection.classList.remove('hidden');
+            } else {
+                roleBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span><span>${u.kelas}</span>`;
+                roleBadge.className = "text-[10px] text-emerald-400 font-medium flex items-center gap-1";
+                btnTambah.classList.add('hidden');
+                adminNavSection.classList.add('hidden');
+            }
+        }
+
+        // NAVIGATION TAB CONTROLLER
+        function navigateTab(tabKey) {
+            state.currentTab = tabKey;
+            
+            // Hide all sections
+            ['ringkasan', 'lms', 'simulasi', 'penugasan', 'monitoring'].forEach(sec => {
+                const el = document.getElementById(`section-${sec}`);
+                if(el) el.classList.add('hidden');
+
+                const navBtn = document.getElementById(`nav-${sec}`);
+                if (navBtn) {
+                    navBtn.className = "w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800/60 transition-all";
+                }
+            });
+
+            // Show Active Section
+            const activeSec = document.getElementById(`section-${tabKey}`);
+            if(activeSec) activeSec.classList.remove('hidden');
+
+            const activeNav = document.getElementById(`nav-${tabKey}`);
+            if(activeNav) {
+                activeNav.className = "w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-white bg-brand-600 shadow-md shadow-brand-600/30 transition-all";
+            }
+
+            // Page Titles
+            const titles = {
+                ringkasan: ['Ringkasan Dashboard', 'Statistik dan informasi umum LMS SD Negeri 3 Canduk'],
+                lms: ['Mata Pelajaran (LMS)', 'Daftar modul pembelajaran dan materi interaktif'],
+                simulasi: ['Simulasi Interaktif', 'Media interaktif berbasis Canva & Canva Sites'],
+                penugasan: ['Penugasan & LKPD', 'Lembar kerja siswa dan pengumpulan tugas'],
+                monitoring: ['Real-time Monitoring', 'Halaman pengawasan progres pengerjaan tugas oleh siswa']
+            };
+
+            if(titles[tabKey]) {
+                document.getElementById('pageTitle').innerText = titles[tabKey][0];
+                document.getElementById('pageSubtitle').innerText = titles[tabKey][1];
+            }
+
+            // Update Add Button Label
+            const btnTambahLabel = document.getElementById('btnTambahLabel');
+            if (tabKey === 'lms') btnTambahLabel.innerText = "Tambah Pelajaran";
+            else if (tabKey === 'simulasi') btnTambahLabel.innerText = "Tambah Simulasi";
+            else if (tabKey === 'penugasan') btnTambahLabel.innerText = "Tambah Penugasan";
+            else btnTambahLabel.innerText = "Tambah Data";
+        }
+
+        // RENDER DATA TO UI
+        function renderAll() {
+            renderStats();
+            renderItems('lms', 'containerLMS');
+            renderItems('simulasi', 'containerSimulasi');
+            renderItems('penugasan', 'containerPenugasan');
+            renderMonitoringTable();
+        }
+
+        function renderStats() {
+            document.getElementById('statLmsCount').innerText = state.items.filter(i => i.kategori === 'lms').length;
+            document.getElementById('statSimulasiCount').innerText = state.items.filter(i => i.kategori === 'simulasi').length;
+            document.getElementById('statPenugasanCount').innerText = state.items.filter(i => i.kategori === 'penugasan').length;
+            document.getElementById('statSiswaCount').innerText = new Set(state.submissions.map(s => s.nama)).size || 1;
+        }
+
+        function formatEmbedHtml(embedString) {
+            if (!embedString) return `<div class="p-4 bg-slate-100 text-slate-400 text-xs text-center rounded-xl">Media embed tidak tersedia</div>`;
+            if (embedString.trim().startsWith('<iframe')) {
+                return `<div class="embed-container">${embedString}</div>`;
+            }
+            // If URL supplied
+            return `<div class="embed-container"><iframe src="${embedString}" allowfullscreen></iframe></div>`;
+        }
+
+        function renderItems(kategori, containerId) {
+            const container = document.getElementById(containerId);
+            const filtered = state.items.filter(i => i.kategori === kategori);
+            const isAdmin = state.currentUser && state.currentUser.role === 'admin';
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full py-12 text-center bg-white rounded-2xl border border-dashed border-slate-200">
+                        <i class="fa-solid fa-folder-open text-4xl text-slate-300 mb-2"></i>
+                        <p class="text-xs font-semibold text-slate-500">Belum ada konten untuk kategori ini.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filtered.map(item => {
+                const isTaskDone = state.submissions.some(s => s.tugasJudul === item.judul && s.nama === (state.currentUser?.nama || ''));
+                
+                return `
+                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-md transition-all">
+                        <div class="p-5 space-y-3">
+                            <div class="flex items-start justify-between gap-2">
+                                <span class="px-2.5 py-1 bg-brand-50 text-brand-600 rounded-lg text-[10px] font-bold uppercase tracking-wider border border-brand-100">
+                                    ${item.kelas}
+                                </span>
+                                ${isAdmin ? `
+                                    <div class="flex items-center gap-1">
+                                        <button onclick="editItem('${item.id}')" class="w-7 h-7 rounded-lg text-slate-400 hover:text-brand-600 hover:bg-slate-100 transition-all text-xs">
+                                            <i class="fa-solid fa-pen"></i>
+                                        </button>
+                                        <button onclick="deleteItem('${item.id}')" class="w-7 h-7 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-all text-xs">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </div>
+                                ` : ''}
+                            </div>
+                            
+                            <h4 class="font-bold text-slate-800 text-sm leading-snug">${item.judul}</h4>
+                            <p class="text-xs text-slate-500 leading-relaxed">${item.deskripsi}</p>
+                            
+                            <!-- EMBED MEDIA PREVIEW -->
+                            <div class="pt-2">
+                                ${formatEmbedHtml(item.embed)}
+                            </div>
+                        </div>
+
+                        ${kategori === 'penugasan' && state.currentUser?.role === 'siswa' ? `
+                            <div class="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+                                <span class="text-[11px] font-semibold text-slate-500">Status Tugas:</span>
+                                ${isTaskDone ? `
+                                    <span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-bold flex items-center gap-1.5">
+                                        <i class="fa-solid fa-circle-check"></i> Selesai Dikirim
+                                    </span>
+                                ` : `
+                                    <button onclick="submitTask('${item.judul}')" class="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center gap-1.5">
+                                        <i class="fa-solid fa-paper-plane"></i> Tandai Selesai
+                                    </button>
+                                `}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderMonitoringTable() {
+            const tbody = document.getElementById('monitoringTableBody');
+            if (state.submissions.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="py-8 text-center text-slate-400 italic">Belum ada data pengerjaan tugas dari siswa.</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = state.submissions.map(sub => `
+                <tr class="hover:bg-slate-50 transition-all">
+                    <td class="py-3 px-4 font-bold text-slate-800">${sub.nama}</td>
+                    <td class="py-3 px-4"><span class="px-2 py-0.5 bg-slate-100 rounded text-[11px]">${sub.kelas}</span></td>
+                    <td class="py-3 px-4 font-medium">${sub.tugasJudul}</td>
+                    <td class="py-3 px-4">
+                        <span class="px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded-full text-[10px] font-bold flex items-center gap-1 w-fit">
+                            <i class="fa-solid fa-check"></i> ${sub.status}
+                        </span>
+                    </td>
+                    <td class="py-3 px-4 text-slate-400 text-[11px]">${sub.waktu}</td>
+                </tr>
+            `).join('');
+        }
+
+        // SUBMIT TASK (SISWA)
+        function submitTask(tugasJudul) {
+            if(!state.currentUser) return;
+            const now = new Date();
+            const waktuStr = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) + `, ` + now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+
+            state.submissions.push({
+                nama: state.currentUser.nama,
+                kelas: state.currentUser.kelas,
+                tugasJudul: tugasJudul,
+                waktu: waktuStr,
+                status: 'Selesai'
+            });
+
+            notifyDataChange();
+            showToast('Tugas berhasil ditandai selesai!');
+        }
+
+        // MANAGE KONTEN (ADMIN)
+        function openModalTambah() {
+            document.getElementById('formKonten').reset();
+            document.getElementById('editItemKey').value = '';
+            document.getElementById('modalFormTitle').innerText = 'Tambah Data Konten Baru';
+            document.getElementById('inputKategori').value = state.currentTab === 'ringkasan' ? 'lms' : state.currentTab;
+            document.getElementById('modalKonten').classList.remove('hidden');
+        }
+
+        function closeModalKonten() {
+            document.getElementById('modalKonten').classList.add('hidden');
+        }
+
+        function handleSaveKonten(e) {
+            e.preventDefault();
+            const editId = document.getElementById('editItemKey').value;
+            const judul = document.getElementById('inputJudul').value.trim();
+            const kelas = document.getElementById('inputKelas').value;
+            const kategori = document.getElementById('inputKategori').value;
+            const deskripsi = document.getElementById('inputDeskripsi').value.trim();
+            const embed = document.getElementById('inputEmbed').value.trim();
+
+            if (editId) {
+                // Update
+                const idx = state.items.findIndex(i => i.id === editId);
+                if (idx !== -1) {
+                    state.items[idx] = { id: editId, judul, kelas, kategori, deskripsi, embed };
+                    showToast('Konten berhasil diperbarui!');
+                }
+            } else {
+                // Create
+                const newItem = {
+                    id: 'item-' + Date.now(),
+                    judul, kelas, kategori, deskripsi, embed
+                };
+                state.items.push(newItem);
+                showToast('Konten berhasil disimpan & dipublikasikan!');
+            }
+
+            notifyDataChange();
+            closeModalKonten();
+        }
+
+        function editItem(itemId) {
+            const item = state.items.find(i => i.id === itemId);
+            if (!item) return;
+
+            document.getElementById('editItemKey').value = item.id;
+            document.getElementById('inputJudul').value = item.judul;
+            document.getElementById('inputKelas').value = item.kelas;
+            document.getElementById('inputKategori').value = item.kategori;
+            document.getElementById('inputDeskripsi').value = item.deskripsi;
+            document.getElementById('inputEmbed').value = item.embed;
+
+            document.getElementById('modalFormTitle').innerText = 'Edit Data Konten';
+            document.getElementById('modalKonten').classList.remove('hidden');
+        }
+
+        function deleteItem(itemId) {
+            if (confirm('Apakah Anda yakin ingin menghapus konten ini?')) {
+                state.items = state.items.filter(i => i.id !== itemId);
+                notifyDataChange();
+                showToast('Konten berhasil dihapus');
+            }
+        }
+
+        // UTILITY: TOAST
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMessage').innerText = msg;
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
